@@ -9,7 +9,8 @@ namespace AssemblyCSharp
 		public float Diapason;
 		public GameObject Sphere;
 		public bool GameStarted;
-		public float StartPosition;
+		public float StartXPosition;
+		public float StartYPosition;
 
 		private float _lastMousePosition;
 
@@ -17,7 +18,8 @@ namespace AssemblyCSharp
 		{
 			Reset ();
 			_lastMousePosition = Input.mousePosition.x;
-			StartPosition = rigidbody.position.x;
+			StartXPosition = transform.position.x;
+			StartYPosition = transform.position.z;
 		}
 
 		public void Update()

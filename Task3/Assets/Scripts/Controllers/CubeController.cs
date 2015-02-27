@@ -7,7 +7,21 @@ namespace AssemblyCSharp
 	{
 		private int _liveCount;
 		private bool _immortal;
+		private bool _mustKilled;
+		private float _timer = 5f;
 
+		public void Update()
+		{
+			if (_mustKilled) 
+			{
+				_timer -= Time.deltaTime;
+				if (_timer < 0f)
+				{
+					_mustKilled = false;
+					gameObject.SetActive(false);
+				}
+			}
+		}
 
 		public void Init(int x, int y, float startx, float starty, float cubeSize, float cubeStratch)
 		{
@@ -42,7 +56,7 @@ namespace AssemblyCSharp
 			{
 				if (collision.gameObject == Main.Sphere.gameObject) 
 				{
-					if (gameObject.name != "SilverCube")
+					if (!_immortal)
 					{
 						_liveCount--;
 						if (_liveCount == 0)
@@ -50,6 +64,19 @@ namespace AssemblyCSharp
 					}
 				}
 			}
+		}
+
+		public void Kill()
+		{
+			GetComponent<Collider> ().isTrigger = true;
+			GetComponent<Rigidbody> ().isKinematic = false;
+			_mustKilled = true;
+		}
+
+		public void Forward(float cubeSize)
+		{
+			rigidbody.position = 
+				new Vector3 (rigidbody.position.x, rigidbody.position.y, rigidbody.position.z - cubeSize);
 		}
 	}
 }

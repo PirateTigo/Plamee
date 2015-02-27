@@ -12,9 +12,26 @@ namespace AssemblyCSharp
 		public ClubController Club;
 		public Main MainClass;
 
+		private float _timer;
+		private const float TimeOut = 30f;
+
 		public void Start()
 		{
 			Direction = new Vector2 (0f, 0f);		
+			_timer = TimeOut;
+		}
+
+		public void Update()
+		{
+			if (GameStarted)
+			{
+				_timer -= Time.deltaTime;
+				if (_timer < 0f) 
+				{
+					speed += speed*0.05f;
+					_timer = TimeOut;
+				}
+			}
 		}
 
 		public void FixedUpdate()
@@ -24,18 +41,25 @@ namespace AssemblyCSharp
 				float delta = speed/speedLimit;
 				delta = delta < 1f ? delta : 1f;
 				float newXPosition = rigidbody.position.x + delta * Direction.x;
-				if (newXPosition > Club.StartPosition + MainClass.ScreenWidth/2f || 
-				    newXPosition < Club.StartPosition - MainClass.ScreenWidth/2f)
+				if (newXPosition > Club.StartXPosition + MainClass.ScreenWidth/2f || 
+				    newXPosition < Club.StartXPosition - MainClass.ScreenWidth/2f)
 				{
 					Direction = new Vector2(-Direction.x, Direction.y);
 					newXPosition = rigidbody.position.x + delta * Direction.x;
+				}
+
+				float newZPosition = rigidbody.position.z + delta * Direction.y;
+				if (newZPosition > Club.StartYPosition + MainClass.ScreenHeight*0.95f)
+				{
+					Direction = new Vector2(Direction.x, -Direction.y);
+					newZPosition = rigidbody.position.z + delta * Direction.y;
 				}
 
 				rigidbody.MovePosition(
 					new Vector3 (
 						newXPosition,
 						rigidbody.position.y,
-						rigidbody.position.z + delta * Direction.y));
+						newZPosition));
 			}
 		}
 
