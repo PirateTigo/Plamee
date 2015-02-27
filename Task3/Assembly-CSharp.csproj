@@ -46,11 +46,12 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\ClubController.cs" />
-     <Compile Include="Assets\Scripts\Cube.cs" />
+     <Compile Include="Assets\Scripts\Controllers\ClubController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\CubeController.cs" />
+     <Compile Include="Assets\Scripts\Controllers\SphereController.cs" />
+     <Compile Include="Assets\Scripts\CubeFactory.cs" />
      <Compile Include="Assets\Scripts\FieldManager.cs" />
      <Compile Include="Assets\Scripts\Main.cs" />
-     <Compile Include="Assets\Scripts\SphereController.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/4.6.0/UnityEngine.UI.dll</HintPath>
  </Reference>
