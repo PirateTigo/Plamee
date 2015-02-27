@@ -8,14 +8,16 @@ namespace AssemblyCSharp
 		public float Density;
 		public float Diapason;
 		public GameObject Sphere;
+		public bool GameStarted;
+		public float StartPosition;
 
-		private bool _gameStarted;
 		private float _lastMousePosition;
 
 		public void Start()
 		{
 			Reset ();
 			_lastMousePosition = Input.mousePosition.x;
+			StartPosition = rigidbody.position.x;
 		}
 
 		public void Update()
@@ -30,7 +32,7 @@ namespace AssemblyCSharp
 					(newClubPosition < -Diapason/2f ? -Diapason/2f :
 					 	newClubPosition);
 				transform.position = new Vector3 (newClubPosition, transform.position.y, transform.position.z);
-				if (!_gameStarted)
+				if (!GameStarted)
 				{
 					Vector3 spherePosition = Sphere.transform.position;
 					newClubPosition = spherePosition.x + delta / Density;

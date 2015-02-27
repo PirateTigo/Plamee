@@ -52,7 +52,6 @@ namespace AssemblyCSharp
 			}
 
 			float randValue = UnityEngine.Random.Range (0, 1.0f);
-			UnityEngine.Debug.Log (randValue);
 
 			if (haveSilverNeighbor) 
 			{
