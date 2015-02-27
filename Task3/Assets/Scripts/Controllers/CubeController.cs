@@ -5,6 +5,9 @@ namespace AssemblyCSharp
 {
 	public class CubeController : MonoBehaviour
 	{
+		public delegate void OnDestroyDelegate();
+		public event OnDestroyDelegate OnDestroy;
+
 		private int _liveCount;
 		private bool _immortal;
 		private bool _mustKilled;
@@ -33,19 +36,19 @@ namespace AssemblyCSharp
 			transform.localScale = new Vector3 (cubeSize*cubeStratch, cubeSize, cubeSize);
 			switch(gameObject.name)
 			{
-				case "SilverCube" : 
-					_immortal = true;
-					break;
-				case "OrangeCube" : 
-					_liveCount = 2;
-					break;
-				case "GreenCube" : 
-					_liveCount = 1;
-					break;
-				case "RedCube" : 
-					_liveCount = 4;
-					break;
-				default :
+			case "SilverCube" : 
+				_immortal = true;
+				break;
+			case "OrangeCube" : 
+				_liveCount = 2;
+				break;
+			case "GreenCube" : 
+				_liveCount = 1;
+				break;
+			case "RedCube" : 
+				_liveCount = 4;
+				break;
+			default :
 					break;
 			}
 		}
@@ -60,7 +63,11 @@ namespace AssemblyCSharp
 					{
 						_liveCount--;
 						if (_liveCount == 0)
+						{
+							if (OnDestroy != null)
+								OnDestroy.Invoke();
 							gameObject.SetActive(false);
+						}
 					}
 				}
 			}

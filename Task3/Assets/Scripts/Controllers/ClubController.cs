@@ -7,49 +7,56 @@ namespace AssemblyCSharp
 	{
 		public float Density;
 		public float Diapason;
-		public GameObject Sphere;
+		public SphereController Sphere;
 		public bool GameStarted;
-		public float StartXPosition;
-		public float StartYPosition;
+		public float StartXPosition { get; private set; }
+		public float StartYPosition { get; private set; }
 
 		private float _lastMousePosition;
+		private Vector3 _startScale;
 
 		public void Start()
 		{
-			Reset ();
 			_lastMousePosition = Input.mousePosition.x;
 			StartXPosition = transform.position.x;
 			StartYPosition = transform.position.z;
+			_startScale = transform.localScale;
 		}
 
 		public void Update()
 		{
+
+		}
+
+		public void FixedUpdate()
+		{
 			if (_lastMousePosition != Input.mousePosition.x)
 			{
-				float newMousePosition = Input.mousePosition.x;
-				float delta = newMousePosition - _lastMousePosition;
-				_lastMousePosition = newMousePosition;
-				float newClubPosition = transform.position.x + delta / Density;
-				newClubPosition = newClubPosition > Diapason/2f ? Diapason/2f : 
-					(newClubPosition < -Diapason/2f ? -Diapason/2f :
-					 	newClubPosition);
-				transform.position = new Vector3 (newClubPosition, transform.position.y, transform.position.z);
-				if (!GameStarted)
+				if (!Sphere.NeedResetPosition)
 				{
-					Vector3 spherePosition = Sphere.transform.position;
-					newClubPosition = spherePosition.x + delta / Density;
-					newClubPosition = newClubPosition > Diapason/2f ? Diapason/2f :
+					float newMousePosition = Input.mousePosition.x;
+					float delta = newMousePosition - _lastMousePosition;
+					_lastMousePosition = newMousePosition;
+					float newClubPosition = transform.position.x + delta / Density;
+					newClubPosition = newClubPosition > Diapason/2f ? Diapason/2f : 
 						(newClubPosition < -Diapason/2f ? -Diapason/2f :
-						 	newClubPosition);
-					Sphere.transform.position = new Vector3(newClubPosition, spherePosition.y, spherePosition.z);
+						 newClubPosition);
+					rigidbody.MovePosition(
+						new Vector3 (newClubPosition, transform.position.y, transform.position.z));
 				}
 			}
 		}
 
-		public void Reset()
+		public void ResetAfterDeath()
 		{
-			transform.position = new Vector3 (0, 1.5f, -38);
-			transform.localScale = new Vector3 (1, 5, 1);
+			GameStarted = false;
+			transform.position = new Vector3 (StartXPosition, transform.position.y, StartYPosition);
+		}
+
+		public void ResetAfterGameOver()
+		{
+			ResetAfterDeath ();
+			transform.localScale = _startScale;
 		}
 	}
 }

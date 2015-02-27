@@ -6,6 +6,7 @@ namespace AssemblyCSharp
 {
 	public class FieldManager
 	{
+		private Main _mainClass;
 		private CubeFactory _cubeFactory;
 		private CubeController[,] _cubes;
 		private int _width;
@@ -15,8 +16,10 @@ namespace AssemblyCSharp
 		private float _cubeSize;
 		private float _cubeStrath;
 
-		public FieldManager (int width, int height, float x, float y, float cubeSize = 1.0f, float cubeStratch = 1.0f)
+		public FieldManager (
+			Main mainClass, int width, int height, float x, float y, float cubeSize = 1.0f, float cubeStratch = 1.0f)
 		{ 
+			_mainClass = mainClass;
 			_cubeFactory = new CubeFactory (
 				GameObject.Find ("SilverCube"),
 				GameObject.Find ("OrangeCube"),
@@ -31,9 +34,13 @@ namespace AssemblyCSharp
 			_cubes = new CubeController[width, height];
 
 			for (int i = 0; i < width; i++) 			
-				for (int j = 0; j < height; j++) 
+				for (int j = 0; j < height; j++)
+				{
 					_cubes [i, j] = 
 						_cubeFactory.GetCube (i, j, x, y, cubeSize, cubeStratch, GetCubeName (i, j));						
+					if (_mainClass != null)
+						_cubes [i, j].OnDestroy += _mainClass.OnScore;											
+				}
 		}
 
 		public IEnumerator UpdateField()
@@ -54,9 +61,35 @@ namespace AssemblyCSharp
 				_cubes [i, _height - 1] = null;
 
 			for (int i = 0; i < _width; i++)
+			{
 				_cubes[i, _height - 1] =
 					_cubeFactory.GetCube(
 						i,_height - 1, _startx, _starty, _cubeSize, _cubeStrath, GetCubeName(i, _height - 1));
+				if (_mainClass != null)
+					_cubes[i, _height - 1].OnDestroy += _mainClass.OnScore;
+			}
+		}
+
+		public IEnumerator Reset()
+		{
+			for (int i = 0; i < _width; i++)
+				for (int j = 0; j < _height; j++)
+					_cubes [i, j].Kill ();
+
+			yield return new WaitForSeconds (1f);
+
+			for (int i = 0; i < _width; i++)
+				for (int j = 0; j < _height; j++)
+					_cubes[i, j] = null;
+
+			for (int i = 0; i < _width; i++)
+				for (int j = 0; j < _height; j++)
+				{
+					_cubes[i, j] = _cubeFactory.GetCube(
+						i, j, _startx, _starty, _cubeSize, _cubeStrath, GetCubeName(i, j));
+					if (_mainClass != null)
+						_cubes[i, j].OnDestroy += _mainClass.OnScore;
+				}
 		}
 
 		private string GetCubeName(int x, int y)
