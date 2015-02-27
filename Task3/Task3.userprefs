@@ -1,10 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Cube.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\ClubController.cs">
     <Files>
-      <File FileName="Assets\Scripts\Main.cs" Line="14" Column="31" />
+      <File FileName="Assets\Scripts\Main.cs" Line="7" Column="1" />
       <File FileName="Assets\Scripts\FieldManager.cs" Line="20" Column="22" />
       <File FileName="Assets\Scripts\Cube.cs" Line="20" Column="48" />
+      <File FileName="Assets\Scripts\ClubController.cs" Line="40" Column="99" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
