@@ -107,7 +107,6 @@ namespace AssemblyCSharp
 
 		public void OnScore()
 		{
-			UnityEngine.Debug.Log ("asdf");
 			int count = (int)System.Convert.ToDecimal (Score.text);
 			count ++;
 			Score.text = count.ToString ();

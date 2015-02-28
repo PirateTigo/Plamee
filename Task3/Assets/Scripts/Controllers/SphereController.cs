@@ -103,6 +103,27 @@ namespace AssemblyCSharp
 					new Vector2(
 						collision.contacts [0].normal.normalized.x, 
 						collision.contacts [0].normal.normalized.z);
+
+				if (Vector2.Angle(normal, Direction) < 90f)
+				{
+					float x1 = normal.x;
+					float x2 = transform.position.x;
+					float y1 = normal.y;
+					float y2 = transform.position.z;
+					if (x1 < x2 && y1 < y2)					
+						normal = (Vector2.Angle(Direction, new Vector2(0f, 1f)) >= 90f) ? 
+						          new Vector2(0f, 1f) : new Vector2(1f, 0f);
+					else if (x1 < x2 && y1 > y2)
+						normal = (Vector2.Angle(Direction, new Vector2(1f, 0f)) >= 90f) ? 
+							new Vector2(1f, 0f) : new Vector2(0f, -1f);
+					else if (x1 > x2 && y1 < y2)
+						normal = (Vector2.Angle(Direction, new Vector2(0f, 1f)) >= 90f) ? 
+						          new Vector2(0f, 1f) : new Vector2(-1f, 0f);
+					else
+						normal = (Vector2.Angle(Direction, new Vector2(0f, -1f)) >= 90f) ? 
+							new Vector2(0f, -1f) : new Vector2(-1f, 0f);
+				}
+
 				Vector2 basis = new Vector2(-normal.y, normal.x);
 				Direction = - Vector2.Dot (normal, Direction) * normal + 
 					Vector2.Dot (basis, Direction) * basis;
