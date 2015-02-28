@@ -7,7 +7,7 @@ namespace AssemblyCSharp
 	{
 		public float speed;
 		public float speedLimit;
-		public Vector2 Direction { get; set; }
+		public Vector2 Direction; // { get; set; }
 		public bool GameStarted;
 		public ClubController Club;
 		public Main MainClass;
@@ -39,9 +39,11 @@ namespace AssemblyCSharp
 				_timer -= Time.deltaTime;
 				if (_timer < 0f) 
 				{
-					speed += speed*0.05f;
+					speed *= 1.05f;
 					_timer = TimeOut;
 				}
+				if (Direction == Vector2.zero)
+					Direction = new Vector2(0f, -1f);
 			}
 			else
 			{
@@ -68,17 +70,23 @@ namespace AssemblyCSharp
 				    newXPosition < Club.StartXPosition - MainClass.ScreenWidth/2f)
 				{
 					Direction = new Vector2(-Direction.x, Direction.y);
+					Direction.Normalize();
 					newXPosition = rigidbody.position.x + delta * Direction.x;
 				}
 
 				float newZPosition = rigidbody.position.z + delta * Direction.y;
 				if (newZPosition > Club.StartYPosition + MainClass.ScreenHeight*0.95f)
 				{
+
 					Direction = new Vector2(Direction.x, -Direction.y);
-					newZPosition = rigidbody.position.z + delta * Direction.y;
+					Direction.Normalize();
+					newZPosition = rigidbody.position.z + delta * Direction.y;					
 				}
-				else if (newZPosition < Club.StartYPosition - MainClass.ScreenHeight*0.2f)
-					MainClass.ResetAfterDeath();
+				else 
+				{ 
+					if (newZPosition < Club.StartYPosition - MainClass.ScreenHeight*0.2f)
+						MainClass.ResetAfterDeath();
+				}
 
 				rigidbody.MovePosition(
 					new Vector3 (
@@ -91,8 +99,7 @@ namespace AssemblyCSharp
 				rigidbody.MovePosition(
 					new Vector3 (_startXPosition, _startYPosition, _startZPosition));
 				NeedResetPosition = false;
-			}
-			
+			}			
 		}
 
 		public void OnCollisionEnter(Collision collision)
@@ -127,6 +134,7 @@ namespace AssemblyCSharp
 				Vector2 basis = new Vector2(-normal.y, normal.x);
 				Direction = - Vector2.Dot (normal, Direction) * normal + 
 					Vector2.Dot (basis, Direction) * basis;
+				Direction.Normalize();
 			}
 		}
 
@@ -142,6 +150,18 @@ namespace AssemblyCSharp
 			ResetAfterDeath ();
 			_timer = TimeOut;
 			speed = _speedBeforeStart;
+		}
+
+		public void OnSphereFaster()
+		{
+			speed *= 1.05f;
+			_timer = TimeOut;
+		}
+
+		public void OnSphereSlower()
+		{
+			speed *= 0.9f;
+			_timer = TimeOut;
 		}
 	}
 }

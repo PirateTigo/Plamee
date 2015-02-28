@@ -7,7 +7,9 @@ namespace AssemblyCSharp
 	public class Main : MonoBehaviour 
 	{
 		public static SphereController Sphere;
-		public ClubController Club;
+		public static BonusFactory SurpriseFactory;
+		public static ClubController Club;
+
 		public float ScreenWidth;
 		public float ScreenHeight;
 		public GameObject LifePanel;
@@ -26,6 +28,8 @@ namespace AssemblyCSharp
 		{
 			SphereInit ();
 			_fieldManager = new FieldManager (this, 10, 5, -23.5f, -26.5f, 3.5f, 1.34f);
+			SurpriseFactoryInit ();
+			ClubInit ();
 		}
 		
 		public void Update () 
@@ -45,7 +49,7 @@ namespace AssemblyCSharp
 				if (!Sphere.NeedResetPosition && Input.GetMouseButtonDown(0))
 				{
 					_gameStarted = true;
-					Sphere.Direction = new Vector2(UnityEngine.Random.Range(-1f, 1f),1f);
+					Sphere.Direction = new Vector2(UnityEngine.Random.Range(-0.5f, 0.5f),1f);
 					Sphere.Direction.Normalize();
 					Club.GameStarted = true;
 					Sphere.GameStarted = true;
@@ -60,11 +64,6 @@ namespace AssemblyCSharp
 					StartCoroutine(_fieldManager.UpdateField());
 				}
 			}
-		}
-
-		public static void SphereInit()
-		{
-			Sphere = GameObject.Find("Sphere").GetComponent<SphereController>();
 		}
 
 		public void ResetAfterDeath()
@@ -112,6 +111,20 @@ namespace AssemblyCSharp
 			Score.text = count.ToString ();
 		}
 
+		public static void SphereInit()
+		{
+			Sphere = GameObject.Find("Sphere").GetComponent<SphereController>();
+		}
+
+		public static void SurpriseFactoryInit ()
+		{
+			SurpriseFactory = new BonusFactory ();
+		}
+
+		public static void ClubInit ()
+		{
+			Club = GameObject.Find ("Club").GetComponent<ClubController> ();
+		}
 		private IEnumerator Death()
 		{
 			switch (_lifeCount)

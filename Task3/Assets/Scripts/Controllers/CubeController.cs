@@ -5,13 +5,20 @@ namespace AssemblyCSharp
 {
 	public class CubeController : MonoBehaviour
 	{
-		public delegate void OnDestroyDelegate();
-		public event OnDestroyDelegate OnDestroy;
+		public delegate void OnScoreDelegate();
+		public event OnScoreDelegate OnScore;
+
+		public delegate void OnKillDelegate(int x, int y, GameObject gameObject);
+		public event OnKillDelegate OnKill;
 
 		private int _liveCount;
 		private bool _immortal;
 		private bool _mustKilled;
-		private float _timer = 5f;
+		private float _timer = 1f;
+		private int _x;
+		private int _y;
+		private float _cubeSize;
+		private float _cubeStratch;
 
 		public void Update()
 		{
@@ -22,12 +29,17 @@ namespace AssemblyCSharp
 				{
 					_mustKilled = false;
 					gameObject.SetActive(false);
+					GameObject.Destroy(gameObject, 2f);
 				}
 			}
 		}
 
 		public void Init(int x, int y, float startx, float starty, float cubeSize, float cubeStratch)
 		{
+			_x = x;
+			_y = y;
+			_cubeSize = cubeSize;
+			_cubeStratch = cubeStratch;
 			transform.position = 
 				new Vector3 (
 					startx + cubeSize * cubeStratch * (x + 0.5f), 
@@ -64,9 +76,13 @@ namespace AssemblyCSharp
 						_liveCount--;
 						if (_liveCount == 0)
 						{
-							if (OnDestroy != null)
-								OnDestroy.Invoke();
-							gameObject.SetActive(false);
+							if (UnityEngine.Random.Range(0f, 1f) < 0.1f)
+								Main.SurpriseFactory.GetBonus(
+									new Vector3(rigidbody.position.x, rigidbody.position.y, rigidbody.position.z));
+							if (OnScore != null)
+								OnScore.Invoke();
+							if (OnKill != null)
+								OnKill.Invoke(_x, _y, gameObject);
 						}
 					}
 				}
@@ -82,8 +98,18 @@ namespace AssemblyCSharp
 
 		public void Forward(float cubeSize)
 		{
-			rigidbody.position = 
-				new Vector3 (rigidbody.position.x, rigidbody.position.y, rigidbody.position.z - cubeSize);
+			rigidbody.MovePosition(
+				new Vector3 (rigidbody.position.x, rigidbody.position.y, rigidbody.position.z - cubeSize));
+			Rigidbody sphereRigidbody = Main.Sphere.rigidbody;
+			if (Mathf.Abs(sphereRigidbody.position.x - rigidbody.position.x) < _cubeStratch && 
+			    Mathf.Abs(sphereRigidbody.position.z - rigidbody.position.z) < _cubeSize)
+			{
+				sphereRigidbody.rigidbody.MovePosition(
+					new Vector3(
+						sphereRigidbody.position.x, 
+						sphereRigidbody.position.y, 
+						sphereRigidbody.position.z - _cubeSize));
+			}
 		}
 	}
 }

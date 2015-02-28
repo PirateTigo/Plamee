@@ -58,6 +58,21 @@ namespace AssemblyCSharp
 			ResetAfterDeath ();
 			transform.localScale = _startScale;
 		}
+
+		public void OnClubLonger()
+		{
+			Vector3 currentScale = transform.localScale;
+			if (currentScale.y * 1.1f > _startScale.y * 1.5f) return;
+			transform.localScale = new Vector3 (currentScale.x, currentScale.y * 1.1f, currentScale.z);
+
+		}
+
+		public void OnClubShorter()
+		{
+			Vector3 currentScale = transform.localScale;
+			if (currentScale.y * 0.95f < _startScale.y * 0.5f) return;
+			transform.localScale = new Vector3 (currentScale.x, currentScale.y * 0.95f, currentScale.z);
+		}
 	}
 }
 

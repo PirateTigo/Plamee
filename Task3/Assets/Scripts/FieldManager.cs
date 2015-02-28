@@ -37,25 +37,31 @@ namespace AssemblyCSharp
 				for (int j = 0; j < height; j++)
 				{
 					_cubes [i, j] = 
-						_cubeFactory.GetCube (i, j, x, y, cubeSize, cubeStratch, GetCubeName (i, j));						
+						_cubeFactory.GetCube (i, j, x, y, cubeSize, cubeStratch, GetCubeName (i, j));											
 					if (_mainClass != null)
-						_cubes [i, j].OnDestroy += _mainClass.OnScore;											
+						_cubes [i, j].OnScore += _mainClass.OnScore;																						
+					_cubes[i, j].OnKill += OnKill;
+					
 				}
 		}
 
 		public IEnumerator UpdateField()
 		{
 			for (int i = 0; i < _width; i++)
-				_cubes [i, 0].Kill ();
+				if (_cubes[i, 0] != null)
+					_cubes [i, 0].Kill ();
 
-			yield return new WaitForSeconds(1f);
+			yield return new WaitForSeconds(2f);
 
-			for (int i = 0; i < _width; i++)
-				for (int j = 1; j < _height; j++)
-				{
-					_cubes[i, j-1] = _cubes[i, j];
-					_cubes[i, j-1].Forward(_cubeSize);
+			for (int j = 0; j < _height-1; j++)
+				for (int i = 0; i < _width; i++)
+				{					
+					_cubes[i, j] = _cubes[i, j+1];						
+					if (_cubes[i, j] != null)
+						_cubes[i, j].Forward(_cubeSize);
 				}
+
+			yield return new WaitForSeconds (0.5f);
 
 			for (int i = 0; i < _width; i++)
 				_cubes [i, _height - 1] = null;
@@ -65,8 +71,9 @@ namespace AssemblyCSharp
 				_cubes[i, _height - 1] =
 					_cubeFactory.GetCube(
 						i,_height - 1, _startx, _starty, _cubeSize, _cubeStrath, GetCubeName(i, _height - 1));
-				if (_mainClass != null)
-					_cubes[i, _height - 1].OnDestroy += _mainClass.OnScore;
+				if (_mainClass != null)				
+					_cubes[i, _height - 1].OnScore += _mainClass.OnScore;				
+				_cubes[i, _height - 1].OnKill += OnKill;
 			}
 		}
 
@@ -74,7 +81,8 @@ namespace AssemblyCSharp
 		{
 			for (int i = 0; i < _width; i++)
 				for (int j = 0; j < _height; j++)
-					_cubes [i, j].Kill ();
+					if (_cubes [i, j] != null)
+						_cubes [i, j].Kill ();
 
 			yield return new WaitForSeconds (1f);
 
@@ -88,8 +96,30 @@ namespace AssemblyCSharp
 					_cubes[i, j] = _cubeFactory.GetCube(
 						i, j, _startx, _starty, _cubeSize, _cubeStrath, GetCubeName(i, j));
 					if (_mainClass != null)
-						_cubes[i, j].OnDestroy += _mainClass.OnScore;
+						_cubes[i, j].OnScore += _mainClass.OnScore;						
+					_cubes[i, j].OnKill += OnKill;
 				}
+		}
+
+		public void OnKill(int x, int y, GameObject gameObject)
+		{
+			if (_cubes[x, y] == null)
+			{
+				gameObject.SetActive(false);
+				GameObject.Destroy(gameObject, 2f);
+				return;
+			}
+			if (_cubes[x, y].gameObject == gameObject)
+			{
+				_cubes [x, y] = null;
+				gameObject.SetActive(false);
+				GameObject.Destroy(gameObject, 2f);
+			}
+			else
+			{
+				gameObject.SetActive(false);
+				GameObject.Destroy(gameObject, 2f);
+			}
 		}
 
 		private string GetCubeName(int x, int y)
@@ -108,7 +138,6 @@ namespace AssemblyCSharp
 							break;
 						}
 					}
-
 				}
 			}
 
